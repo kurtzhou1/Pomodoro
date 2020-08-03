@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect,useRef} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import {IState} from '../libs/common'
 import {TIME_START} from '../constant/index'
@@ -6,53 +6,71 @@ import {TIME_START} from '../constant/index'
 const Clock:React.FC= ()=>{
 
     const dispatch = useDispatch();
+
+    // 工作時間
     const workTime = useSelector((state:IState) => state.time.workTime)
-    const breakTime = useSelector((state:IState) => state.time.breakTime)
-    const [remainWorkSecond, setRemainWorkSecond] = useState(workTime * 60)
-    const [remainBreakSecond, setremainBreakSecond] = useState(breakTime * 60)
-
-
     const countWorkTime = new Date(workTime*60*1000).toISOString().substr(11,8)
-    const countBreakTime = new Date(breakTime*60*1000).toISOString().substr(11,8)
-    const nowTime = Date.now()
+    const [remainWorkSecond, setRemainWorkSecond] = useState<string>(countWorkTime)
 
-    const TimeStart = (time:number,isStart:boolean) => {
-        const letStart = setInterval(()=>{
+    // 休息時間
+    const breakTime = useSelector((state:IState) => state.time.breakTime)
+    const countBreakTime = new Date(breakTime*60*1000).toISOString().substr(11,8)
+    const [remainBreakSecond, setremainBreakSecond] = useState<string>(countBreakTime)
+
+    // 暫停時間
+    const [pauseTime,setpauseTime] = useState(true)
+    const storeRemainTime = useRef(workTime) // 傳出remainTime
+    const timeIDRef =  useRef(0)// timeoutId 提供clear使用
+
+    const timeHandle = (time:number) => {
+        
+        const nowTime = Date.now()
+      
+        return window.setInterval(()=>{
+            let remainTime = 0
             const pastTime = (Date.now() - nowTime) / 1000
-            const remainTime = time*60 - pastTime
-            if(time === breakTime){
-                setremainBreakSecond(remainBreakSecond < 0 ? 0: remainTime)
-            }else{
-                setRemainWorkSecond(remainTime < 0 ? 0: remainTime)
-            }
-            if (remainTime <= 0) {
-               clearInterval(letStart)
-              }
+            remainTime = time*60 - pastTime < 0 ? 0 : time*60 - pastTime
+            console.log('remainTime=>>',remainTime)
+            const timeFormat = new Date(Math.round(remainTime)*1000).toISOString().substr(11,8)
+            time === breakTime ? setremainBreakSecond(timeFormat) : setRemainWorkSecond(timeFormat)
+                storeRemainTime.current = remainTime
             //檢查是否結束
         },1000)
+      
+    }
+    const TimeStart = () => {
+        timeIDRef.current = timeHandle(workTime)
+    }
+
+    const stopTime = ()=> {
+        clearInterval(timeIDRef.current)
     }
 
     
-    console.log('remainWorkSecond=>>',Math.round(remainWorkSecond))
 
-    if(Math.round(remainWorkSecond) === 0){
-        TimeStart(breakTime,true)
-        console.log('breakTimeStart')
-    }
+    useEffect(()=>{
+        if(storeRemainTime.current <= 0){
+            stopTime()
+            timeIDRef.current = timeHandle(breakTime)
+        }
+    },[storeRemainTime.current])
 
     return(
         <>
             <div>
-                工作時間{new Date(Math.round(remainWorkSecond)*1000).toISOString().substr(11,8)}
+                工作時間{remainWorkSecond}
             </div>
             <div>
-                休息時間{new Date(Math.round(remainBreakSecond)*1000).toISOString().substr(11,8)}
+                休息時間{remainBreakSecond}
             </div>
-            <div onClick={()=> TimeStart(workTime,true)}>
+            <div onClick={()=> TimeStart()}>
                 開始
             </div>
-            <div onClick={()=> TimeStart(workTime,false)}>
-                結束
+            <div onClick={()=> stopTime()}>
+                暫停
+            </div>
+            <div>
+                繼續
             </div>
         </>
     )
