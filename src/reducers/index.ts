@@ -11,7 +11,7 @@ export const initState:IState = {
       isDone: false,
     }],
     time:{
-      workTime: 25,
+      workTime: 0.1,
       breakTime: 5,
     },
     button:{
