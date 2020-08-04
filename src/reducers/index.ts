@@ -12,7 +12,7 @@ export const initState:IState = {
     }],
     time:{
       workTime: 0.1,
-      breakTime: 5,
+      breakTime: 0.1,
     },
     button:{
       isPause: false,
