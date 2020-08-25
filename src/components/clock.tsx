@@ -1,10 +1,16 @@
 import React,{useState,useEffect,useRef} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import {IState} from '../libs/common'
+import {REMOVE_TODOLIST} from '../constant'
 import TodoList from './ToDoList'
+import styles from './styles/css.module.scss'
 
-const Clock:React.FC<{isDone?:boolean}>= (props) =>{
+const Clock:React.FC<{isDone?:boolean}>= () =>{
 
+    const dispatch = useDispatch()
+
+    const [percentage, setPercentage] = useState<number>(100); // 圓的圓周
+    
     // 工作時間
     const workTime = useSelector((state:IState) => state.time.workTime)
     const workTimeFormat = new Date(workTime*60*1000).toISOString().substr(11,8)
@@ -34,6 +40,16 @@ const Clock:React.FC<{isDone?:boolean}>= (props) =>{
             const timeFormat = new Date(Math.round(remainTime)*1000).toISOString().substr(11,8)
             isWorkTime.current ? setRemainWorkSecond(timeFormat) : setremainBreakSecond(timeFormat)
                 storeRemainTime.current = remainTime
+            //處理圓圈動畫
+            let percentageCurrent = Math.round(remainTime / 15)
+            console.log('percentageCurrent=>>',percentageCurrent)
+            setPercentage(percentageCurrent => {
+                if (percentageCurrent <= 0) {
+                  return 100;
+                } else {
+                  return percentageCurrent - 1 / 10;
+                }
+              });
         },1000)
       
     }
@@ -49,8 +65,42 @@ const Clock:React.FC<{isDone?:boolean}>= (props) =>{
     const continueTime = () => {
         timeIDRef.current = timeHandle(storeRemainTime.current / 60)
     }
+
+    const deleteItem = () => {
+        dispatch({
+            type:REMOVE_TODOLIST,
+            playload: {}
+        })
+    }
+
+// 關於圓 start
+
+    // 寬度 / 2  - 線的寬度 / 2
+    const radius = () => {
+        return 120 / 2 - 10 / 2;
+    };
+
+    console.log(radius())
+
+    // 圓的大小的一半，寬度 / 2，拼湊整個圓
+    const circleOffset = () => {
+        return '50%';
+    };
+
+    // 圓周率公式
+    const circumference = () => {
+        return radius() * 2 * Math.PI;
+    };
+
+    // 圓周見圓周乘上百分比除上 100，修改上面 90 參數 100 為滿圓
+    const progress = () => {
+    return circumference() - (circumference() * percentage) / 100;
+    };
     
+// 關於圓 end
+
     useEffect(()=>{
+        console.log()
         if(storeRemainTime.current <= 0 && isWorkTime.current){
             pauseTime() // 暫停
             timeIDRef.current = timeHandle(breakTime) // 重啟休息時間
@@ -65,12 +115,37 @@ const Clock:React.FC<{isDone?:boolean}>= (props) =>{
 
 
     return(
-        <>
+        <div  className={styles.timerContainer}>
+             <svg className={styles.svg} width="60%" viewBox="0 0 200 200">
+                <circle
+                className={styles.timer}
+                fill="transparent"
+                strokeWidth="5"
+                stroke="#afdde6"
+                r="55"
+                cx={circleOffset()}
+                cy={circleOffset()}
+                />
+                <circle
+                className={styles.timer}
+                fill="transparent"
+                strokeWidth="5"
+                stroke="#ec6d65"
+                r="55"
+                cx={circleOffset()}
+                cy={circleOffset()}
+                strokeDasharray={circumference()}
+                strokeDashoffset={progress()}
+                strokeLinecap="round"
+                />
+            </svg>
             <div>
-                {isWorkTimeUp.current ? '已完成':'未完成'}
+                {isWorkTimeUp.current ? '✔ 已完成':'✘ 未完成'}
             </div>
             <div>
                 工作時間{remainWorkSecond}
+            </div>
+            <div>
             </div>
             <div>
                 休息時間{remainBreakSecond}
@@ -86,7 +161,10 @@ const Clock:React.FC<{isDone?:boolean}>= (props) =>{
             <div onClick={()=> continueTime()}>
                 繼續
             </div>
-        </>
+            <div onClick={()=> deleteItem()}>
+                刪除
+            </div>
+        </div>
     )
 }
 

@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {IState} from '../libs/common';
 import { useSelector, useDispatch } from 'react-redux';
-import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST} from '../constant'
+import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST} from '../constant'
 import '../scss/test.scss'
 
 const ToDoList:React.FC = () => {
@@ -17,7 +17,7 @@ const ToDoList:React.FC = () => {
       })
   }
 
-  const addEvent = ()=> {
+  const addEvent = () => {
       if(inputText.length > 0) {
           dispatch({
             type: ADD_TODOLIST,
@@ -42,7 +42,7 @@ const ToDoList:React.FC = () => {
         <div>
             <div>{data.id}</div>
             <div>{data.toDoList}</div>
-            <div onClick={()=>finishEvent(data.id)}>{data.isDone? '✔ 已完成':'✘ 未完成'}</div>
+            {/* <div onClick={()=>finishEvent(data.id)}>{data.isDone? '✔ 已完成':'✘ 未完成'}</div> */}
         </div>
         )
       })}
