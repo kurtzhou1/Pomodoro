@@ -1,3 +1,20 @@
+html,body{
+    height: 100%; margin: 0; padding: 0;    
+}
+
 .timer_module{
-    display: flex;
+    background: linear-gradient(#84fab0,#8fd3f4);
+    height: 100%;
+    .bottomIconWrap{
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        margin: 15px 0;
+        >div{
+            width: 50%;
+            display: flex;
+            justify-content: center;
+        }
+    }
 }

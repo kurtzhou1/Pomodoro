@@ -6,8 +6,8 @@ import '../scss/test.scss'
 
 const ToDoList:React.FC = () => {
 
-  const inputText = useSelector((state:IState)=>state.input.text)
-  const todoList = useSelector((state:IState)=> state.todos)
+  const inputText = useSelector((state:IState) => state.input.text)
+  const todoList = useSelector((state:IState) => state.todos)
   const dispatch = useDispatch()
 
   const changeText = (value:string) =>{
@@ -46,6 +46,7 @@ const ToDoList:React.FC = () => {
         </div>
         )
       })}
+      
     </div>
   );
 }
