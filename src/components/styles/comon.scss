@@ -3,7 +3,7 @@ html,body{
 }
 
 .timer_module{
-    background: linear-gradient(#84fab0,#8fd3f4);
+    background: linear-gradient(#84fab0,#8fd3f4,white);
     height: 100%;
     .bottomIconWrap{
         display: flex;
@@ -16,5 +16,34 @@ html,body{
             display: flex;
             justify-content: center;
         }
+    }
+    .leftVisible{
+        width: 100%;
+        height: 100%;
+        transform: translate(-100%);
+        transition-duration: 0.3s;
+        position: fixed;
+        overflow: hidden;
+        overflow-y: auto;
+        top: 0;
+        background: linear-gradient(#fddb92,#d1fdff);
+        &.show{
+            transform: translate(0%);
+            transition-duration: 0.3s;
+        }
+    }
+}
+
+.Pomodoro_module{
+    height: 100%;
+    border: 1px solid gray;
+    padding: 10px;
+    font-family: Microsoft JhengHei;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    >input{
+        width: calc(100% - 30px);
+        height: 40px;
     }
 }

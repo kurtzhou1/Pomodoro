@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ToDoList from './ToDoList'
 import Clock from './clock'
 import './styles/comon.scss'
 import { MenuFoldOutlined, PlusSquareOutlined } from '@ant-design/icons';
 
-const containers:React.FC = () => {
+const Containers:React.FC = () => {
+
+    const [leftVisible,setLeftVisible]= useState<boolean>(false)
+    // const [percentage, setPercentage] = useState<number>(100); // 圓的圓周
+
     return (
         <div className='timer_module'>
             <Clock />
-            <ToDoList />
+            <div className={`leftVisible ${leftVisible ? "show":""}`}>
+                <ToDoList />
+            </div>
             <div className='bottomIconWrap'>
-                <div><PlusSquareOutlined /></div>
+                <div onClick={()=>setLeftVisible(!leftVisible)}><PlusSquareOutlined /></div>
                 <div><MenuFoldOutlined /></div>
             </div>
         </div>
     )
 }
 
-export default containers
+export default Containers

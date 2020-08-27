@@ -2,7 +2,7 @@ import React,{useState} from 'react';
 import {IState} from '../libs/common';
 import { useSelector, useDispatch } from 'react-redux';
 import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST} from '../constant'
-import '../scss/test.scss'
+import './styles/comon.scss'
 
 const ToDoList:React.FC = () => {
 
@@ -34,7 +34,7 @@ const ToDoList:React.FC = () => {
   })
 
   return (
-    <div className="Pomodoro-module">
+    <div className="Pomodoro_module">
       <input value={inputText} onChange={e=>changeText(e.target.value)} placeholder='type something'/>
       <div onClick={()=>addEvent()}>+</div>
       {todoList.map(data=>{
