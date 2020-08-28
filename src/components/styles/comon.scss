@@ -3,7 +3,7 @@ html,body{
 }
 
 .timer_module{
-    background: linear-gradient(#84fab0,#8fd3f4,white);
+    background: linear-gradient(#84fab0,#d1fdff,white);
     height: 100%;
     .bottomIconWrap{
         display: flex;
@@ -26,7 +26,7 @@ html,body{
         overflow: hidden;
         overflow-y: auto;
         top: 0;
-        background: linear-gradient(#fddb92,#d1fdff);
+        background: linear-gradient(#fddb92,#d1fdff,white);
         &.show{
             transform: translate(0%);
             transition-duration: 0.3s;
@@ -35,8 +35,8 @@ html,body{
 }
 
 .Pomodoro_module{
+    position: relative;
     height: 100%;
-    border: 1px solid gray;
     padding: 10px;
     font-family: Microsoft JhengHei;
     display: flex;
@@ -45,5 +45,29 @@ html,body{
     >input{
         width: calc(100% - 30px);
         height: 40px;
+        border-radius: 10px;
+        padding-left: 15px;
+        border: 5px solid #fddb92;
+    }
+    .add{
+        position: absolute;
+        right: 30px;
+        top: 23px;
+        font-weight: bold;
+    }
+    .item_wrap{
+        width: calc(100% - 30px);
+        margin-top: 10px;
+        .item{
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            .id{
+                width: 20%;
+            }
+            .toDoList{
+                width: 75%;
+            }
+        }
     }
 }

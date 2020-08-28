@@ -1,0 +1,133 @@
+@mixin Title ($textColor: initial) {
+    >h1 {
+      font-size: 16px;
+      box-sizing: border-box;
+      color: $textColor;
+      margin-left: 10px;
+      margin-bottom: 10px;
+      @content;
+    }
+  }
+  
+  @mixin Line () {
+    > li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+    }
+  }
+  
+  @mixin List_CheckBtn ($border-color: #80CBC4 ) {
+    border: 2px solid $border-color;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    padding: 5px;
+    @content;
+  }
+  
+  @mixin List_Title () {
+    font-size: 14px;
+    @content;
+  }
+  
+  @mixin List_Count () {
+    margin-right: auto;
+    justify-self: flex-start;
+    display: flex;
+    
+    >li {
+      margin-right: 3px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: red;
+    }
+    @content;
+  }
+  
+  @mixin List_Cancel () {
+    border: 1px solid #D6D6D6;
+    border-radius: 50%;
+    background-color: #D6D6D6;
+    color: white;
+    width: 5px;
+    height: 5px;
+    padding: 5px;
+    transform: rotate(45deg);
+    transform-origin: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > * {
+      transform: scale(.8)
+    }
+    @content;
+  }
+  
+  @mixin List (){
+    @include Line();
+    &_check {
+      @include List_CheckBtn() {
+        margin-right: 5px;
+      }
+      &-active {
+       position: relative;
+        &:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          margin: auto;
+          display: block;
+          background-color: #ec6d65;
+          width: 90%;
+          height: 90%;
+          border-radius: 50%;
+  
+        }
+      }
+    }
+    &_title {
+      @include List_Title() {
+        margin-right: 5px;
+        justify-self: flex-start;
+      }
+    }
+    &_count {
+      @include List_Count;
+    }
+    &_cancel {
+      @include List_Cancel;
+    }
+    @content;
+  }
+  
+  @mixin Todo_List() {
+    @include List;
+  }
+  
+  @mixin Finish_List() {
+    @include List() {
+      &_check {
+        @include List_CheckBtn(#C2C2C2) {
+          >* {
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+            color: #C2C2C2;
+            transform: translate(-50%, -50%) scale(.5);
+          }
+        }
+      }
+      &_title {
+        @include List_Title() {
+          margin-right: auto;
+        }
+      }
+    }
+  }

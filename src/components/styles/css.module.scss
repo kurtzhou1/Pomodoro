@@ -1,3 +1,5 @@
+@import './mixin';
+
 .timerWrap{
   width: 100%;
   height: 360px;
@@ -52,3 +54,31 @@
     display: flex;
     justify-content: space-around;
   }
+
+
+
+.module_wrap {
+  width: 90%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(calc(-50% - 50px));
+}
+
+.todo {
+  @include Title;
+  margin-bottom: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #999;
+  &_list {
+    @include Todo_List()
+  }
+}
+
+.finish {
+  @include Title;
+  padding: 10px 0;
+  &_list {
+    @include Finish_List()
+  }
+}
