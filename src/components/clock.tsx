@@ -2,7 +2,6 @@ import React,{useState,useEffect,useRef} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import {IState} from '../libs/common'
 import {REMOVE_TODOLIST} from '../constant'
-import TodoList from './ToDoList'
 import styles from './styles/css.module.scss'
 import { PauseOutlined, CaretRightOutlined,StepForwardOutlined } from '@ant-design/icons';
 
@@ -11,7 +10,7 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
     const dispatch = useDispatch()
 
     const [percentage, setPercentage] = useState<number>(100); // 圓的圓周
-    const todoList = useSelector((state:IState) => state.todos[0].toDoList)
+    const nowDoingItem = useSelector((state:IState)=> state.todos[state.value] ? state.todos[state.value].toDoList : '')
     
     // 工作時間
     const workTime = useSelector((state:IState) => state.time.workTime * 60)
@@ -46,8 +45,12 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
       
     }
     const TimeStart = () => {
-        timeIDRef.current = timeHandle(workTime)
-        setIsTimeStart(true)
+        if(nowDoingItem !== ''){
+            timeIDRef.current = timeHandle(workTime)
+            setIsTimeStart(true)
+        }else{
+            alert('請點擊左下角輸入代辦事件')
+        }
     }
 
     const pauseTime = () => {
@@ -114,7 +117,8 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
                     </div>
                     {isWorkTime.current ? 
                         <div>
-                            {todoList}{remainWorkSecond}
+                            <div>{nowDoingItem}</div>
+                            <div>{remainWorkSecond}</div>
                         </div>  :
                         <div>
                             休息時間{remainBreakSecond}
@@ -157,7 +161,6 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
                     strokeLinecap="round"
                     />
                 </svg>
-            
                 <div onClick={()=> deleteItem()}>
                     刪除
                 </div>

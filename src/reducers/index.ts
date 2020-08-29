@@ -1,4 +1,4 @@
-import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST} from '../constant'
+import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST,SELECT_RADIO_VALUE} from '../constant'
 import {IState, todos} from '../libs/common'
 
 export const initState:IState = {
@@ -6,14 +6,15 @@ export const initState:IState = {
         text:'',
     },
     todos:[{
-      id:0,
-      toDoList: '範文測試',
-      isDone: false,
-    }],
+        id:0,
+        toDoList: '範文測試',
+        isDone: false,
+      }],
     time:{
-      workTime: 25,
+      workTime: 0.05,
       breakTime: 5,
     },
+    value:0,
     button:{
       isPause: false,
       isReset: false,
@@ -32,15 +33,20 @@ export const reducer = (state=initState , action:any):IState =>{
         case DONE_TODOLIST:
             const tmp_done_toDoList = state.todos.map(item=>item)
             tmp_done_toDoList[action.payload.finishEvent].isDone = !tmp_done_toDoList[action.payload.finishEvent].isDone
-            console.log('id=>>',action.payload.finishEvent)
             return {...state,todos:tmp_done_toDoList}
         case REMOVE_TODOLIST:
-            const tmp_remove_toDoList = state.todos.map(item=>item)
-            tmp_remove_toDoList.splice(action.payload.removeEvent,1)
-            for (let i=0; i<tmp_remove_toDoList.length;i++){
-                tmp_remove_toDoList[i].id = i
+            const remove_Finish_Todo = state.todos.map(item=>item)
+            const index = state.todos.find((todo) => {
+                return todo.id === action.payload.removeId
+            });
+            if (index)
+            remove_Finish_Todo.splice(index.id, 1);
+            for (var i = 0; i < remove_Finish_Todo.length; i++) {
+                remove_Finish_Todo[i].id = i;
             }
-            return {...state,todos:tmp_remove_toDoList}
+            return {...state, todos:remove_Finish_Todo}
+        case SELECT_RADIO_VALUE:
+            return {...state,value:action.payload.radioValue}
         default:
             return state
     }

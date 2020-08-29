@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
-import {IState} from '../libs/common';
+import {IState,todos} from '../libs/common';
 import { useSelector, useDispatch } from 'react-redux';
-import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST} from '../constant'
+import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST,SELECT_RADIO_VALUE} from '../constant'
 import { PlusOutlined } from '@ant-design/icons';
 import './styles/comon.scss'
 import styles from './styles/css.module.scss';
@@ -9,8 +9,10 @@ import styles from './styles/css.module.scss';
 const ToDoList:React.FC = () => {
 
   const inputText = useSelector((state:IState) => state.input.text)
-  const todoList = useSelector((state:IState) => state.todos)
+  const toDoList = useSelector((state:IState) => state.todos)
   const dispatch = useDispatch()
+
+  // const [radioValue, setRadioValue] = useState(0)
 
   const changeText = (value:string) =>{
       dispatch({
@@ -30,8 +32,15 @@ const ToDoList:React.FC = () => {
 
   const removeEvent = (value:number) =>{
     dispatch({
-      type:REMOVE_TODOLIST,
-      payload: {removeEvent:value}
+      type: REMOVE_TODOLIST,
+      payload: { removeId:value },
+    });
+  }
+
+  const selectRadioValue = (value:number) => {
+    dispatch({
+      type: SELECT_RADIO_VALUE,
+      payload: { radioValue:value }
     })
   }
 
@@ -47,10 +56,9 @@ const ToDoList:React.FC = () => {
       <input value={inputText} onChange={e=>changeText(e.target.value)} placeholder='type something and add'/>
       <div className='add' onClick={()=>addEvent()}>＋</div>
       <div className='item_wrap'>
-        {todoList.map(data=>{
-          return(
+        {toDoList.map((data:todos)=>
           <div className='item'>
-              <div className='id'>{data.id}</div>
+              <div className='id'><input name='item' type='radio' value={data.id} onChange={e=>selectRadioValue(parseInt(e.target.value))}/>{data.id}</div>
               <div className='toDoList'>{data.toDoList}</div>
               {/* <div onClick={()=>finishEvent(data.id)}>{data.isDone? '✔ 已完成':'✘ 未完成'}</div> */}
               <div className={styles.todo_list_cancel} onClick={()=>removeEvent(data.id)}>
@@ -58,7 +66,7 @@ const ToDoList:React.FC = () => {
               </div>
           </div>
           )
-        })}
+        }
       </div>
     </div>
   );

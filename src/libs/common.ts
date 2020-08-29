@@ -22,5 +22,6 @@ export interface IState{
     input: input,
     todos: todos[],
     time: time,
+    value: number,
     button: button,
 }
