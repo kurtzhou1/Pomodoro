@@ -11,10 +11,10 @@ export const initState:IState = {
         isDone: false,
       }],
     time:{
-      workTime: 0.05,
-      breakTime: 5,
+      workTime: 0.5,
+      breakTime: 0.5,
     },
-    value:0,
+    value: 0,
     button:{
       isPause: false,
       isReset: false,

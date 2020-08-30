@@ -32,8 +32,10 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
     const [isTimeStart,setIsTimeStart] = useState(false)
 
     const timeHandle = (time:number) => {
+        console.log('hello1')
         const nowTime = Date.now()
         return window.setInterval(()=>{
+            console.log('hello3')
             let remainTime = 0
             const pastTime = (Date.now() - nowTime) / 1000
             remainTime = time - pastTime < 0 ? 0 : time - pastTime
@@ -41,9 +43,9 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
             isWorkTime.current ? setRemainWorkSecond(timeFormat) : setremainBreakSecond(timeFormat)
                 storeRemainTime.current = remainTime
             //處理圓圈動畫
-        },1000)
-      
+        },1000)  
     }
+
     const TimeStart = () => {
         if(nowDoingItem !== ''){
             timeIDRef.current = timeHandle(workTime)
@@ -61,12 +63,6 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
         timeIDRef.current = timeHandle(storeRemainTime.current)
     }
 
-    const deleteItem = () => {
-        dispatch({
-            type:REMOVE_TODOLIST,
-            playload: {}
-        })
-    }
 
 // 關於圓 start
 
@@ -95,8 +91,9 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
     useEffect(()=>{
         let percentageCurrent = Math.round(storeRemainTime.current / 15)
         setPercentage(percentageCurrent)
-
+        console.log('storeRemainTime.current',storeRemainTime.current)
         if(storeRemainTime.current <= 0 && isWorkTime.current){
+            console.log('hello2')
             pauseTime() // 暫停
             timeIDRef.current = timeHandle(breakTime) // 重啟休息時間
             isWorkTime.current = false // 顯示為休息時間
@@ -107,6 +104,12 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
             // isWorkTime.current = true
         }
     },[storeRemainTime.current])
+
+    useEffect(()=>{
+        if(isWorkTimeUp){
+            
+        }
+    },[isWorkTimeUp])
 
     return(
         <div className={styles.timerWrap}>
@@ -161,9 +164,6 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
                     strokeLinecap="round"
                     />
                 </svg>
-                <div onClick={()=> deleteItem()}>
-                    刪除
-                </div>
             </div>
         </div>
     )

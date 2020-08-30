@@ -58,7 +58,7 @@ const ToDoList:React.FC = () => {
       <div className='item_wrap'>
         {toDoList.map((data:todos)=>
           <div className='item'>
-              <div className='id'><input name='item' type='radio' value={data.id} onChange={e=>selectRadioValue(parseInt(e.target.value))}/>{data.id}</div>
+              <div className='id'><input name='item' type='radio' value={data.id} checked onChange={e=>selectRadioValue(parseInt(e.target.value))}/>{data.id}</div>
               <div className='toDoList'>{data.toDoList}</div>
               {/* <div onClick={()=>finishEvent(data.id)}>{data.isDone? '✔ 已完成':'✘ 未完成'}</div> */}
               <div className={styles.todo_list_cancel} onClick={()=>removeEvent(data.id)}>

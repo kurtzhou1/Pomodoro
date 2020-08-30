@@ -32,6 +32,21 @@ html,body{
             transition-duration: 0.3s;
         }
     }
+    .rightVisible{
+        width: 100%;
+        height: 100%;
+        transform: translate(100%);
+        transition-duration: 0.3s;
+        position: fixed;
+        overflow: hidden;
+        overflow-y: auto;
+        top: 0;
+        background: linear-gradient(#fed6e3,#d1fdff,white);
+        &.show{
+            transform: translate(0%);
+            transition-duration: 0.3s;
+        }
+    }
 }
 
 .Pomodoro_module{
@@ -64,10 +79,21 @@ html,body{
             margin: 5px 0;
             .id{
                 width: 20%;
+                >input{
+                    margin-right: 10px;
+                }
             }
             .toDoList{
                 width: 75%;
             }
         }
+    }
+}
+
+.hasDone{
+    padding: 15px;
+    .title{
+        font-weight: bold;
+        border-bottom: 2px solid #a18cd1;
     }
 }
