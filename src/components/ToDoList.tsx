@@ -10,9 +10,8 @@ const ToDoList:React.FC = () => {
 
   const inputText = useSelector((state:IState) => state.input.text)
   const toDoList = useSelector((state:IState) => state.todos)
+  const radioValue = useSelector((state:IState)=> state.value)
   const dispatch = useDispatch()
-
-  // const [radioValue, setRadioValue] = useState(0)
 
   const changeText = (value:string) =>{
       dispatch({
@@ -58,7 +57,7 @@ const ToDoList:React.FC = () => {
       <div className='item_wrap'>
         {toDoList.map((data:todos)=>
           <div className='item'>
-              <div className='id'><input name='item' type='radio' value={data.id} checked onChange={e=>selectRadioValue(parseInt(e.target.value))}/>{data.id}</div>
+              <div className={`id ${radioValue === data.id ? 'show':''}`}><input name='item' type='radio' value={data.id} onChange={e=>selectRadioValue(parseInt(e.target.value))}/><span>{data.id}</span></div>
               <div className='toDoList'>{data.toDoList}</div>
               {/* <div onClick={()=>finishEvent(data.id)}>{data.isDone? '✔ 已完成':'✘ 未完成'}</div> */}
               <div className={styles.todo_list_cancel} onClick={()=>removeEvent(data.id)}>

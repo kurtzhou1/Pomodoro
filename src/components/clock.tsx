@@ -1,11 +1,11 @@
 import React,{useState,useEffect,useRef} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import {IState} from '../libs/common'
-import {REMOVE_TODOLIST} from '../constant'
+import {HAS_DONE_ITEM} from '../constant'
 import styles from './styles/css.module.scss'
 import { PauseOutlined, CaretRightOutlined,StepForwardOutlined } from '@ant-design/icons';
 
-const Clock:React.FC<{isDone?:boolean}>= () =>{
+const Clock:React.FC<{isDone?:boolean}> = () => {
 
     const dispatch = useDispatch()
 
@@ -32,10 +32,8 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
     const [isTimeStart,setIsTimeStart] = useState(false)
 
     const timeHandle = (time:number) => {
-        console.log('hello1')
         const nowTime = Date.now()
         return window.setInterval(()=>{
-            console.log('hello3')
             let remainTime = 0
             const pastTime = (Date.now() - nowTime) / 1000
             remainTime = time - pastTime < 0 ? 0 : time - pastTime
@@ -61,6 +59,14 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
 
     const continueTime = () => {
         timeIDRef.current = timeHandle(storeRemainTime.current)
+    }
+
+    const addhasDoneItem = (value:string) => {
+        console.log('456456')
+        dispatch({
+            type: HAS_DONE_ITEM,
+            payload: {addItem:value}
+        })
     }
 
 
@@ -91,13 +97,12 @@ const Clock:React.FC<{isDone?:boolean}>= () =>{
     useEffect(()=>{
         let percentageCurrent = Math.round(storeRemainTime.current / 15)
         setPercentage(percentageCurrent)
-        console.log('storeRemainTime.current',storeRemainTime.current)
         if(storeRemainTime.current <= 0 && isWorkTime.current){
-            console.log('hello2')
             pauseTime() // 暫停
             timeIDRef.current = timeHandle(breakTime) // 重啟休息時間
             isWorkTime.current = false // 顯示為休息時間
             isWorkTimeUp.current = true
+            addhasDoneItem(nowDoingItem)
         }else if (storeRemainTime.current <= 0 && !isWorkTime.current){
             setIsTimeStart(false)
             pauseTime() // 暫停

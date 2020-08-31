@@ -13,15 +13,10 @@ export interface time{
     breakTime: number,
 }
 
-export interface button{
-    isPause: boolean,
-    isReset: boolean,
-}
-
 export interface IState{
     input: input,
     todos: todos[],
     time: time,
     value: number,
-    button: button,
+    hasDoneItem:string[],
 }

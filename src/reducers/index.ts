@@ -1,4 +1,4 @@
-import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST,SELECT_RADIO_VALUE} from '../constant'
+import {CHANGE_TEXT,ADD_TODOLIST,DONE_TODOLIST,REMOVE_TODOLIST,SELECT_RADIO_VALUE,HAS_DONE_ITEM} from '../constant'
 import {IState, todos} from '../libs/common'
 
 export const initState:IState = {
@@ -15,10 +15,7 @@ export const initState:IState = {
       breakTime: 0.5,
     },
     value: 0,
-    button:{
-      isPause: false,
-      isReset: false,
-    }
+    hasDoneItem: []
 }
 
 export const reducer = (state=initState , action:any):IState =>{
@@ -47,6 +44,10 @@ export const reducer = (state=initState , action:any):IState =>{
             return {...state, todos:remove_Finish_Todo}
         case SELECT_RADIO_VALUE:
             return {...state,value:action.payload.radioValue}
+        case HAS_DONE_ITEM:
+            const tmp_add_doneItem = state.hasDoneItem.map(item=>item)
+            tmp_add_doneItem.push(action.payload.addItem)
+            return {...state,hasDoneItem:tmp_add_doneItem}
         default:
             return state
     }
