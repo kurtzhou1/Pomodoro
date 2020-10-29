@@ -30,6 +30,7 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
     const storeRemainTime = useRef(workTime) // 傳出remainTime
     const timeIDRef =  useRef(0)// timeoutId 提供clear使用
     const [isTimeStart,setIsTimeStart] = useState(false)
+    let isTimePause = useRef<boolean>(false)
 
     const timeHandle = (time:number) => {
         const nowTime = Date.now()
@@ -54,11 +55,17 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
     }
 
     const pauseTime = () => {
-        clearInterval(timeIDRef.current)
+        if(!isTimePause.current){
+            clearInterval(timeIDRef.current)
+            isTimePause.current = true
+        }
     }
 
     const continueTime = () => {
-        timeIDRef.current = timeHandle(storeRemainTime.current)
+        if(isTimePause.current){
+            timeIDRef.current = timeHandle(storeRemainTime.current)
+            isTimePause.current = false
+        }
     }
 
     const addhasDoneItem = (value:string) => {
