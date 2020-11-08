@@ -152,11 +152,8 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
                     }
                     {isWorkTime.current ? isTimeStart  ?
                         <div className={styles.iconWrap}>
-                            <div onClick={()=> pauseTime()}>
-                                <PauseOutlined />
-                            </div>
-                            <div onClick={()=> continueTime()}>
-                                <StepForwardOutlined />
+                            <div onClick={()=> {isTimePause ? continueTime() : pauseTime()}}>
+                                {isTimePause ? <CaretRightOutlined /> : <PauseOutlined />}
                             </div>
                         </div> :
                         <div onClick={()=> TimeStart()}>
