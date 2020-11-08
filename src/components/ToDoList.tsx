@@ -43,13 +43,6 @@ const ToDoList:React.FC = () => {
     })
   }
 
-  const finishEvent = ((value:number)=>{
-    dispatch({
-      type:DONE_TODOLIST,
-      payload:{finishEvent:value}
-    })
-  })
-
   return (
     <div className="Pomodoro_module">
       <input value={inputText} onChange={e=>changeText(e.target.value)} placeholder='type something and add'/>
@@ -59,7 +52,6 @@ const ToDoList:React.FC = () => {
           <div className='item'>
               <div className={`id ${radioValue === data.id ? 'show':''}`}><input name='item' type='radio' value={data.id} onChange={e=>selectRadioValue(parseInt(e.target.value))}/><span>{data.id}</span></div>
               <div className='toDoList'>{data.toDoList}</div>
-              {/* <div onClick={()=>finishEvent(data.id)}>{data.isDone? '✔ 已完成':'✘ 未完成'}</div> */}
               <div className={styles.todo_list_cancel} onClick={()=>removeEvent(data.id)}>
                 <PlusOutlined />
               </div>

@@ -1,7 +1,7 @@
 import React,{useState,useEffect,useRef} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import {IState} from '../libs/common'
-import {HAS_DONE_ITEM} from '../constant'
+import {HAS_DONE_ITEM,REMOVE_TODOLIST} from '../constant'
 import styles from './styles/css.module.scss'
 import { PauseOutlined, CaretRightOutlined,StepForwardOutlined } from '@ant-design/icons';
 
@@ -24,15 +24,17 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
 
     // 顯示工作or休息時間Time
     const isWorkTime  = useRef<boolean>(true)
-    const isWorkTimeUp = useRef<boolean>(false) // Work Time結束，將工作未完成改成已完成
+    const [isWorkTimeUp,setIsWorkTimeUp] = useState<boolean>(false) // Work Time結束，將工作未完成改成已完成
 
     // 暫停時間
-    const storeRemainTime = useRef(workTime) // 傳出remainTime
+    const storeWorkRemainTime = useRef(workTime) // 傳出工作剩餘時間
+    const storeBreakkRemainTime = useRef(workTime)
     const timeIDRef =  useRef(0)// timeoutId 提供clear使用
     const [isTimeStart,setIsTimeStart] = useState(false)
-    let isTimePause = useRef<boolean>(false)
+    const [isTimePause,setIsTimePause] = useState(false)
 
     const timeHandle = (time:number) => {
+        console.log('處理時間=>>>>>>>>>',isWorkTime)
         const nowTime = Date.now()
         return window.setInterval(()=>{
             let remainTime = 0
@@ -40,7 +42,7 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
             remainTime = time - pastTime < 0 ? 0 : time - pastTime
             const timeFormat = new Date(Math.round(remainTime)*1000).toISOString().substr(11,8)
             isWorkTime.current ? setRemainWorkSecond(timeFormat) : setremainBreakSecond(timeFormat)
-                storeRemainTime.current = remainTime
+            isWorkTime.current ? storeWorkRemainTime.current = remainTime : storeBreakkRemainTime.current = remainTime
             //處理圓圈動畫
         },1000)  
     }
@@ -55,26 +57,32 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
     }
 
     const pauseTime = () => {
-        if(!isTimePause.current){
+        if(!isTimePause){
             clearInterval(timeIDRef.current)
-            isTimePause.current = true
+            setIsTimePause(true)
         }
     }
 
     const continueTime = () => {
-        if(isTimePause.current){
-            timeIDRef.current = timeHandle(storeRemainTime.current)
-            isTimePause.current = false
+        if(isTimePause){
+            timeIDRef.current = timeHandle(storeWorkRemainTime.current)
+            setIsTimePause(false)
         }
     }
 
     const addhasDoneItem = (value:string) => {
-        console.log('456456')
         dispatch({
             type: HAS_DONE_ITEM,
             payload: {addItem:value}
         })
     }
+
+    const removeEvent = () =>{
+        dispatch({
+          type: REMOVE_TODOLIST,
+          payload: { removeId:0 },
+        });
+      }
 
 
 // 關於圓 start
@@ -102,44 +110,41 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
 // 關於圓 end
 
     useEffect(()=>{
-        let percentageCurrent = Math.round(storeRemainTime.current / 15)
+        let percentageCurrent = Math.round(storeWorkRemainTime.current / 15)
         setPercentage(percentageCurrent)
-        if(storeRemainTime.current <= 0 && isWorkTime.current){
+        if(storeWorkRemainTime.current <= 0 && isWorkTime.current){
+            console.log('工作時間=>>>>>>>>>')
+            isWorkTime.current = false // 顯示為休息時間
             pauseTime() // 暫停
             timeIDRef.current = timeHandle(breakTime) // 重啟休息時間
-            isWorkTime.current = false // 顯示為休息時間
-            isWorkTimeUp.current = true
+            setIsWorkTimeUp(true)
             addhasDoneItem(nowDoingItem)
-        }else if (storeRemainTime.current <= 0 && !isWorkTime.current){
+        }else if (storeBreakkRemainTime.current <= 0 && !isWorkTime.current){
+            console.log('休息時間=>>>>>>>>>')
             setIsTimeStart(false)
             pauseTime() // 暫停
-            // isWorkTime.current = true
+            removeEvent() //刪除已完成項目
+            isWorkTime.current = true
         }
-    },[storeRemainTime.current])
-
-    useEffect(()=>{
-        if(isWorkTimeUp){
-            
-        }
-    },[isWorkTimeUp])
+    },[storeWorkRemainTime.current,storeBreakkRemainTime.current])
 
     return(
         <div className={styles.timerWrap}>
             <div  className={styles.timerContainer}>
                 <div className={styles.timeInfo}>
                     <div>
-                        {isWorkTimeUp.current ? '✔ 已完成':'✘ 未完成'}
+                        {isWorkTimeUp ? '✔ 已完成':'✘ 未完成'}
                     </div>
                     {isWorkTime.current ? 
                         <div>
-                            <div>{nowDoingItem}</div>
+                            <div>{isTimePause ? '暫停中' : nowDoingItem}</div>
                             <div>{remainWorkSecond}</div>
                         </div>  :
                         <div>
                             休息時間{remainBreakSecond}
                         </div>
                     }
-                    {isTimeStart ?
+                    {isWorkTime.current ? isTimeStart  ?
                         <div className={styles.iconWrap}>
                             <div onClick={()=> pauseTime()}>
                                 <PauseOutlined />
@@ -150,7 +155,7 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
                         </div> :
                         <div onClick={()=> TimeStart()}>
                             <CaretRightOutlined />
-                        </div>
+                        </div> : ''
                     }
                 </div>
                 <svg className={styles.svg} width="60%" viewBox="0 0 200 200">
