@@ -6,6 +6,8 @@ import styles from './styles/css.module.scss'
 import { PauseOutlined, CaretRightOutlined,StepForwardOutlined } from '@ant-design/icons';
 
 const Clock:React.FC<{isDone?:boolean}> = () => {
+    const defaultWorkTime = 25;
+    const defaulBreakTime = 5;
 
     const dispatch = useDispatch()
 
@@ -13,28 +15,26 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
     const nowDoingItem = useSelector((state:IState)=> state.todos[state.value] ? state.todos[state.value].toDoList : '')
     
     // 工作時間
-    const workTime = useSelector((state:IState) => state.time.workTime * 60)
+    const workTime = defaultWorkTime * 60
     const workTimeFormat = new Date(workTime*1000).toISOString().substr(11,8)
     const [remainWorkSecond, setRemainWorkSecond] = useState<string>(workTimeFormat)
 
     // 休息時間
-    const breakTime = useSelector((state:IState) => state.time.breakTime * 60)
+    const breakTime = defaulBreakTime * 60
     const breakTimeFormat = new Date(breakTime*1000).toISOString().substr(11,8)
     const [remainBreakSecond, setremainBreakSecond] = useState<string>(breakTimeFormat)
 
     // 顯示工作or休息時間Time
-    const isWorkTime  = useRef<boolean>(true)
-    const [isWorkTimeUp,setIsWorkTimeUp] = useState<boolean>(false) // Work Time結束，將工作未完成改成已完成
+    const isWorkTime  = useRef<boolean>(true) //判斷現在是工作還是休息
 
     // 暫停時間
     const storeWorkRemainTime = useRef(workTime) // 傳出工作剩餘時間
-    const storeBreakkRemainTime = useRef(workTime)
+    const storeBreakRemainTime = useRef(breakTime)
     const timeIDRef =  useRef(0)// timeoutId 提供clear使用
     const [isTimeStart,setIsTimeStart] = useState(false)
     const [isTimePause,setIsTimePause] = useState(false)
 
     const timeHandle = (time:number) => {
-        console.log('處理時間=>>>>>>>>>',isWorkTime)
         const nowTime = Date.now()
         return window.setInterval(()=>{
             let remainTime = 0
@@ -42,12 +42,13 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
             remainTime = time - pastTime < 0 ? 0 : time - pastTime
             const timeFormat = new Date(Math.round(remainTime)*1000).toISOString().substr(11,8)
             isWorkTime.current ? setRemainWorkSecond(timeFormat) : setremainBreakSecond(timeFormat)
-            isWorkTime.current ? storeWorkRemainTime.current = remainTime : storeBreakkRemainTime.current = remainTime
+            isWorkTime.current ? storeWorkRemainTime.current = remainTime : storeBreakRemainTime.current = remainTime
             //處理圓圈動畫
         },1000)  
     }
 
     const TimeStart = () => {
+        storeWorkRemainTime.current = workTime;
         if(nowDoingItem !== ''){
             timeIDRef.current = timeHandle(workTime)
             setIsTimeStart(true)
@@ -113,27 +114,32 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
         let percentageCurrent = Math.round(storeWorkRemainTime.current / 15)
         setPercentage(percentageCurrent)
         if(storeWorkRemainTime.current <= 0 && isWorkTime.current){
-            console.log('工作時間=>>>>>>>>>')
-            isWorkTime.current = false // 顯示為休息時間
-            pauseTime() // 暫停
+            isWorkTime.current = false // 改成休息時間
+            clearInterval(timeIDRef.current) // 暫停
             timeIDRef.current = timeHandle(breakTime) // 重啟休息時間
-            setIsWorkTimeUp(true)
             addhasDoneItem(nowDoingItem)
-        }else if (storeBreakkRemainTime.current <= 0 && !isWorkTime.current){
-            console.log('休息時間=>>>>>>>>>')
-            setIsTimeStart(false)
-            pauseTime() // 暫停
-            removeEvent() //刪除已完成項目
-            isWorkTime.current = true
         }
-    },[storeWorkRemainTime.current,storeBreakkRemainTime.current])
+    },[storeWorkRemainTime.current])
+
+    useEffect(()=>{
+        let percentageCurrent = Math.round(storeWorkRemainTime.current / 15)
+        setPercentage(percentageCurrent)
+       if (storeBreakRemainTime.current <= 0 && !isWorkTime.current){
+            setIsTimeStart(false)
+            clearInterval(timeIDRef.current)
+            removeEvent() //刪除已完成項目
+            isWorkTime.current = true // 改回工作時間
+            setIsTimePause(false) // 暫停時間改回true
+            setRemainWorkSecond(workTimeFormat)
+        }
+    },[storeBreakRemainTime.current])
 
     return(
         <div className={styles.timerWrap}>
             <div  className={styles.timerContainer}>
                 <div className={styles.timeInfo}>
                     <div>
-                        {isWorkTimeUp ? '✔ 已完成':'✘ 未完成'}
+                        {!isWorkTime.current ? '✔ 已完成':'✘ 未完成'}
                     </div>
                     {isWorkTime.current ? 
                         <div>

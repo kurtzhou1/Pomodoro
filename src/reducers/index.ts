@@ -10,10 +10,6 @@ export const initState:IState = {
         toDoList: '範文測試',
         isDone: false,
       }],
-    time:{
-      workTime: 0.5,
-      breakTime: 0.5,
-    },
     value: 0,
     hasDoneItem: []
 }
@@ -38,7 +34,7 @@ export const reducer = (state=initState , action:any):IState =>{
             });
             if (index)
             remove_Finish_Todo.splice(index.id, 1);
-            for (var i = 0; i < remove_Finish_Todo.length; i++) {
+            for (let i = 0; i < remove_Finish_Todo.length; i++) {
                 remove_Finish_Todo[i].id = i;
             }
             return {...state, todos:remove_Finish_Todo}
