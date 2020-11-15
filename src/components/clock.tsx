@@ -6,8 +6,8 @@ import styles from './styles/css.module.scss'
 import { PauseOutlined, CaretRightOutlined,StepForwardOutlined } from '@ant-design/icons';
 
 const Clock:React.FC<{isDone?:boolean}> = () => {
-    const defaultWorkTime = 25;
-    const defaulBreakTime = 5;
+    const defaultWorkTime = 3;
+    const defaulBreakTime = 3;
 
     const dispatch = useDispatch()
 
@@ -85,6 +85,19 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
         });
       }
 
+    const passItem = () => {
+        if(nowDoingItem !== '' && !isTimeStart){
+            removeEvent() //刪除項目
+        }
+        if(isTimeStart){
+            removeEvent() //刪除項目
+            setIsTimeStart(false)
+            clearInterval(timeIDRef.current)
+            setIsTimePause(false)
+            setRemainWorkSecond(workTimeFormat) //重置倒數時間
+        }
+    }
+
 
 // 關於圓 start
 
@@ -155,10 +168,21 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
                             <div onClick={()=> {isTimePause ? continueTime() : pauseTime()}}>
                                 {isTimePause ? <CaretRightOutlined /> : <PauseOutlined />}
                             </div>
+                            {isTimePause ?  
+                                <div onClick={passItem}>
+                                    <StepForwardOutlined />
+                                </div> : '' }
                         </div> :
-                        <div onClick={()=> TimeStart()}>
-                            <CaretRightOutlined />
-                        </div> : ''
+                        <>
+                        <div className={styles.iconWrap}>
+                            <div onClick={()=> TimeStart()}>
+                                <CaretRightOutlined />
+                            </div>
+                            <div onClick={passItem}>
+                                <StepForwardOutlined />
+                            </div>
+                        </div>
+                        </> : ''
                     }
                 </div>
                 <svg className={styles.svg} width="60%" viewBox="0 0 200 200">

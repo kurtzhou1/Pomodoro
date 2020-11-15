@@ -69,6 +69,9 @@ html,body{
         right: 30px;
         top: 23px;
         font-weight: bold;
+        &:hover{
+            cursor: pointer;
+        }
     }
     .item_wrap{
         width: calc(100% - 30px);

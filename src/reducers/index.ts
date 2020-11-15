@@ -22,7 +22,7 @@ export const reducer = (state=initState , action:any):IState =>{
             const tmp_add_toDoList = state.todos.map(item=>item)
             const todoLength = tmp_add_toDoList.length
             tmp_add_toDoList.push({id:todoLength,toDoList:action.payload.addEvent,isDone: false})
-            return {...state,todos:tmp_add_toDoList}
+            return {...state,input:{text:''},todos:tmp_add_toDoList}
         case DONE_TODOLIST:
             const tmp_done_toDoList = state.todos.map(item=>item)
             tmp_done_toDoList[action.payload.finishEvent].isDone = !tmp_done_toDoList[action.payload.finishEvent].isDone
