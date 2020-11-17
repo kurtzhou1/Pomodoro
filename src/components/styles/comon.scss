@@ -47,6 +47,12 @@ html,body{
             transition-duration: 0.3s;
         }
     }
+    .skipBreak{
+        text-decoration: underline;
+        &:hover{
+            cursor: pointer;
+        }
+    }
 }
 
 .Pomodoro_module{

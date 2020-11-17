@@ -4,10 +4,11 @@ import {IState} from '../libs/common'
 import {HAS_DONE_ITEM,REMOVE_TODOLIST} from '../constant'
 import styles from './styles/css.module.scss'
 import { PauseOutlined, CaretRightOutlined,StepForwardOutlined } from '@ant-design/icons';
+import ReactPlayer from "react-player";
 
 const Clock:React.FC<{isDone?:boolean}> = () => {
-    const defaultWorkTime = 3;
-    const defaulBreakTime = 3;
+    const defaultWorkTime = 25;
+    const defaulBreakTime = 5;
 
     const dispatch = useDispatch()
 
@@ -33,6 +34,9 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
     const timeIDRef =  useRef(0)// timeoutId 提供clear使用
     const [isTimeStart,setIsTimeStart] = useState(false)
     const [isTimePause,setIsTimePause] = useState(false)
+
+    // 鬧鐘
+    const [ audioPlay , setAudioPlay ] = useState(false)
 
     const timeHandle = (time:number) => {
         const nowTime = Date.now()
@@ -98,6 +102,16 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
         }
     }
 
+    const skipBreak = () => {
+        setIsTimeStart(false)
+        clearInterval(timeIDRef.current)
+        removeEvent() //刪除已完成項目
+        isWorkTime.current = true // 改回工作時間
+        setIsTimePause(false) // 暫停時間改回true
+        setAudioPlay(false)
+        setRemainWorkSecond(workTimeFormat)
+    }
+
 
 // 關於圓 start
 
@@ -131,6 +145,7 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
             clearInterval(timeIDRef.current) // 暫停
             timeIDRef.current = timeHandle(breakTime) // 重啟休息時間
             addhasDoneItem(nowDoingItem)
+            setAudioPlay(true)
         }
     },[storeWorkRemainTime.current])
 
@@ -143,6 +158,7 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
             removeEvent() //刪除已完成項目
             isWorkTime.current = true // 改回工作時間
             setIsTimePause(false) // 暫停時間改回true
+            setAudioPlay(false)
             setRemainWorkSecond(workTimeFormat)
         }
     },[storeBreakRemainTime.current])
@@ -160,7 +176,8 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
                             <div>{remainWorkSecond}</div>
                         </div>  :
                         <div>
-                            休息時間{remainBreakSecond}
+                            <div>休息時間{remainBreakSecond}</div>
+                            <div className='skipBreak' onClick={skipBreak}>點我跳過</div>
                         </div>
                     }
                     {isWorkTime.current ? isTimeStart  ?
@@ -209,6 +226,11 @@ const Clock:React.FC<{isDone?:boolean}> = () => {
                     />
                 </svg>
             </div>
+            <ReactPlayer
+                url="https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"
+                playing={audioPlay}
+                loop={true}
+            />
         </div>
     )
 }
