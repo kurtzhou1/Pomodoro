@@ -48,15 +48,17 @@ const ToDoList:React.FC = () => {
       <input value={inputText} onChange={e=>changeText(e.target.value)} placeholder='type something and add'/>
       <div className='add' onClick={()=>addEvent()}>＋</div>
       <div className='item_wrap'>
-        {toDoList.map((data:todos)=>
+        {toDoList.map((data:todos)=>{
+          const {id = 0,toDoList = '預設值' , isDone = false} = data;
+          return(
           <div className='item'>
-              <div className={`id ${radioValue === data.id ? 'show':''}`}><input name='item' type='radio' value={data.id} onChange={e=>selectRadioValue(parseInt(e.target.value))}/><span>{data.id}</span></div>
-              <div className='toDoList'>{data.toDoList}</div>
-              <div className={styles.todo_list_cancel} onClick={()=>removeEvent(data.id)}>
+              <div className={`id ${radioValue === id ? 'show':''}`}><input name='item' type='radio' value={id} onChange={e=>selectRadioValue(parseInt(e.target.value))}/><span>{id}</span></div>
+              <div className='toDoList'>{toDoList}</div>
+              <div className={styles.todo_list_cancel} onClick={()=>removeEvent(id)}>
                 <PlusOutlined />
               </div>
           </div>
-          )
+          )})
         }
       </div>
     </div>
